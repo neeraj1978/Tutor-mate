@@ -1,0 +1,25 @@
+You are an expert teacher.
+Generate a practice set for the following weak concepts: {concepts}
+
+Task:
+1. Create 3 questions for EACH concept.
+2. Questions should have increasing difficulty (Easy, Medium, Hard).
+3. Provide the correct answer and a step-by-step solution.
+
+Output Format (JSON):
+{
+  "practice_set": [
+    {
+      "concept": "Concept Name",
+      "questions": [
+        {
+          "difficulty": "Easy",
+          "question": "Question text...",
+          "answer": "Correct Answer",
+          "solution": "Step-by-step solution..."
+        }
+      ]
+    }
+  ]
+}
+Return ONLY valid JSON.

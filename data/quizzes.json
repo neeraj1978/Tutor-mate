@@ -1,0 +1,24 @@
+{
+  "quiz_id": "math_001",
+  "title": "Algebra Basics",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Solve for x: 2x + 4 = 10",
+      "correct_answer": "3",
+      "concepts": ["Linear Equations", "Algebra"]
+    },
+    {
+      "id": "q2",
+      "text": "What is the slope of the line y = 3x + 2?",
+      "correct_answer": "3",
+      "concepts": ["Linear Functions", "Slope"]
+    },
+    {
+      "id": "q3",
+      "text": "Simplify: 3(x + 2) - 2x",
+      "correct_answer": "x + 6",
+      "concepts": ["Algebraic Simplification", "Distributive Property"]
+    }
+  ]
+}

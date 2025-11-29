@@ -1,0 +1,11 @@
+You are an expert educational consultant.
+Generate a progress report for a teacher based on the following student data: {data}
+
+Task:
+1. Summarize overall mastery levels.
+2. Highlight concepts that need attention (low mastery).
+3. Mention improvements (if any).
+4. Recommend next steps for the teacher.
+
+Output Format:
+Markdown text suitable for a report.

@@ -1,0 +1,13 @@
+google-cloud-aiplatform
+google-generativeai
+sympy
+pandas
+numpy
+python-dotenv
+jsonschema
+matplotlib
+seaborn
+jupyter
+fastapi
+uvicorn
+python-multipart

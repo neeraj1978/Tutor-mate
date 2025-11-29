@@ -1,0 +1,17 @@
+{
+    "student_id": "s001",
+    "responses": [
+        {
+            "question_id": "q1",
+            "answer": "3"
+        },
+        {
+            "question_id": "q2",
+            "answer": "2"
+        },
+        {
+            "question_id": "q3",
+            "answer": "3x + 6"
+        }
+    ]
+}

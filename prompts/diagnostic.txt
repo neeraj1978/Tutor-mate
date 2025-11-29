@@ -1,0 +1,24 @@
+You are an expert educational diagnostician.
+Analyze the following student quiz data to identify weak concepts.
+
+Input Data:
+{data}
+
+Task:
+1. Compare student answers with correct answers.
+2. Identify which concepts were misunderstood based on the incorrect answers.
+3. Assign a confidence score (0-1) for the diagnosis of each weak concept.
+4. Explain WHY the student might have made the mistake (misconception).
+
+Output Format (JSON):
+{
+  "weak_concepts": [
+    {
+      "concept": "Concept Name",
+      "confidence": 0.9,
+      "reason": "Explanation of the error..."
+    }
+  ],
+  "summary": "Brief summary of student performance."
+}
+Return ONLY valid JSON.

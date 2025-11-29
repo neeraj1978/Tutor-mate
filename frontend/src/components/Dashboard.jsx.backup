@@ -1,0 +1,279 @@
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import {
+    TrendingUp, CheckCircle, AlertCircle, MessageSquare, Send,
+    BookOpen, Clock, Target, Image as ImageIcon, X
+} from 'lucide-react';
+import {
+    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+    ResponsiveContainer, Tooltip
+} from 'recharts';
+import axios from 'axios';
+
+const Dashboard = ({ user, onStartChat }) => {
+    const [stats, setStats] = useState(null);
+    const [recentSessions, setRecentSessions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [chatInput, setChatInput] = useState("");
+    const [chatMessages, setChatMessages] = useState([]);
+    const [chatLoading, setChatLoading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                // Ensure we have a valid ID
+                const userId = user.id || user.user_id || user._id;
+                if (!userId) {
+                    console.warn("No user ID found in user object:", user);
+                    setLoading(false);
+                    return;
+                }
+
+                const response = await axios.get(`http://localhost:8000/dashboard/${userId}`);
+                setStats(response.data.stats);
+                setRecentSessions(response.data.recent_sessions);
+            } catch (error) {
+                console.error("Error fetching dashboard data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchDashboardData();
+        } else {
+            setLoading(false);
+        }
+    }, [user]);
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleChatSubmit = async (e) => {
+        e.preventDefault();
+        if (!chatInput.trim() && !selectedImage) return;
+
+        const userMessage = chatInput;
+        const imageToSend = selectedImage;
+
+        setChatInput("");
+        setSelectedImage(null);
+
+        setChatMessages(prev => [...prev, {
+            role: 'user',
+            content: userMessage,
+            image: imageToSend
+        }]);
+        setChatLoading(true);
+
+        try {
+            // In a real app, we would send the image to the backend here
+            // For now, we'll just send the text
+            const response = await axios.post('http://localhost:8000/chat/helper', {
+                session_id: "dashboard-helper",
+                message: userMessage,
+                history: chatMessages.map(m => ({ role: m.role, content: m.content })),
+                grade_level: user.grade_level || "College Year 1"
+                // image: imageToSend // Backend support needed
+            });
+
+            setChatMessages(prev => [...prev, {
+                role: 'ai',
+                content: response.data.response || "I'm here to help! How can I assist you?"
+            }]);
+        } catch (error) {
+            console.error("Error in chat:", error);
+            setChatMessages(prev => [...prev, {
+                role: 'ai',
+                content: "I'm having trouble connecting. Please try again!"
+            }]);
+        } finally {
+            setChatLoading(false);
+        }
+    };
+
+    if (loading) return (
+        {/* Stats Cards */ }
+        < div className = "grid grid-cols-1 md:grid-cols-3 gap-6" >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="card bg-white border-l-4 border-primary"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-500 text-sm font-medium">Total Sessions</p>
+                            <h3 className="text-3xl font-bold text-gray-900">{stats?.total_sessions || 0}</h3>
+                        </div>
+                        <div className="p-3 bg-indigo-50 rounded-full text-primary">
+                            <Clock size={24} />
+                        </div>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="card bg-white border-l-4 border-green-500"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-500 text-sm font-medium">Active Streak</p>
+                            <h3 className="text-3xl font-bold text-gray-900">{stats?.streak || 0} {stats?.streak === 1 ? 'Day' : 'Days'}</h3>
+                        </div>
+                        <div className="p-3 bg-green-50 rounded-full text-green-500">
+                            <TrendingUp size={24} />
+                        </div>
+                    </div>
+                </motion.div>
+            </div >
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Skill Radar Chart */}
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="card backdrop-blur-sm bg-white/80"
+        >
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary to-secondary rounded-full"></div>
+                Skill Analysis
+            </h2>
+            <div className="h-80">
+                {radarData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                            <PolarGrid stroke="#e5e7eb" />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#6b7280', fontSize: 12 }} />
+                            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 10 }} />
+                            <Radar
+                                name="My Skills"
+                                dataKey="score"
+                                stroke="#4F46E5"
+                                fill="#4F46E5"
+                                fillOpacity={0.3}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                }}
+                            />
+                        </RadarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="flex items-center justify-center h-full text-gray-400">
+                        <div className="text-center">
+                            <BookOpen size={48} className="mx-auto mb-3 opacity-50" />
+                            <p className="text-sm">Complete some learning sessions to see your skill analysis!</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </motion.div>
+
+        {/* AI Chatbot Helper */}
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="card backdrop-blur-sm bg-white/80 flex flex-col h-[400px]"
+        >
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary to-secondary rounded-full"></div>
+                AI Study Helper
+                <MessageSquare size={20} className="text-primary" />
+            </h2>
+
+            <div className="flex-1 bg-gray-50 rounded-lg p-4 mb-4 overflow-y-auto">
+                {chatMessages.length === 0 ? (
+                    <div className="text-center text-gray-400 mt-12">
+                        <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Ask me anything about your studies!</p>
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {chatMessages.map((msg, idx) => (
+                            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[80%] p-3 rounded-lg ${msg.role === 'user'
+                                    ? 'bg-primary text-white rounded-br-none'
+                                    : 'bg-white border border-gray-200 rounded-bl-none'
+                                    }`}>
+                                    {msg.image && (
+                                        <img src={msg.image} alt="Uploaded" className="max-w-full h-auto rounded-lg mb-2" />
+                                    )}
+                                    <p className="text-sm">{msg.content}</p>
+                                </div>
+                            </div>
+                        ))}
+                        {chatLoading && (
+                            <div className="flex justify-start">
+                                <div className="bg-white border border-gray-200 p-3 rounded-lg rounded-bl-none">
+                                    <div className="flex gap-1">
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            <div className="relative">
+                {selectedImage && (
+                    <div className="absolute bottom-full left-0 mb-2 p-2 bg-white border border-gray-200 rounded-lg shadow-lg flex items-center gap-2">
+                        <img src={selectedImage} alt="Preview" className="w-10 h-10 object-cover rounded" />
+                        <span className="text-xs text-gray-500">Image selected</span>
+                        <button onClick={() => setSelectedImage(null)} className="text-gray-400 hover:text-red-500">
+                            <X size={16} />
+                        </button>
+                    </div>
+                )}
+                <form onSubmit={handleChatSubmit} className="flex gap-2">
+                    <label className="p-2 text-gray-400 hover:text-primary cursor-pointer transition-colors">
+                        <ImageIcon size={20} />
+                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                    </label>
+                    <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Ask a question..."
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+                        disabled={chatLoading}
+                    />
+                    <button
+                        type="submit"
+                        disabled={chatLoading || (!chatInput.trim() && !selectedImage)}
+                        className="bg-gradient-to-r from-primary to-secondary text-white p-2 rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                        <Send size={20} />
+                    </button>
+                </form>
+            </div>
+        </motion.div>
+    </div>
+        </div >
+    );
+};
+
+export default Dashboard;
