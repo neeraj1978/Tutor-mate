@@ -1,84 +1,100 @@
-# TutorMate: AI Teacher Assistant
+# TutorMate: AI-Powered Intelligent Tutoring System 🎓🤖
 
-**TutorMate** is a multi-agent educational intelligence system designed to help underperforming students by diagnosing their weak concepts, generating personalized practice, scheduling revision sessions, and tracking long-term progress.
+**TutorMate** is a next-generation AI tutoring platform designed to provide personalized, adaptive, and engaging learning experiences. It leverages advanced Large Language Models (Google Gemini) to act as a smart tutor that understands, diagnoses, explains, and quizzes students just like a human teacher would.
 
-Built with **Google Vertex AI** and **Gemini**.
+![TutorMate Banner](https://via.placeholder.com/1200x400?text=TutorMate+AI+Learning+Platform)
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **Multi-Agent Architecture**: Specialized agents for diagnosis, practice generation, explanation, and tracking.
-- **Deep Diagnosis**: Goes beyond right/wrong to identify *why* a student missed a concept.
-- **Personalized Practice**: Generates new questions tailored to specific weaknesses.
-- **Long-term Memory**: Tracks student mastery over time using a persistent Memory Bank.
-- **Teacher Summaries**: Generates human-readable reports for educators.
+*   **🧠 Cognitive Diagnosis:** Automatically identifies a student's weak areas through quiz responses and interaction patterns.
+*   **💬 Socratic Chat Agent:** A conversational AI that guides students to answers rather than just giving them away, using Socratic questioning techniques.
+*   **📊 Smart Dashboard:** Visualizes learning progress, recent sessions, and performance stats with interactive charts.
+*   **🎮 Gamified Learning:** "Daily Challenge" mode with cooldowns and rewards to build a daily learning habit.
+*   **📝 Adaptive Practice:** Generates custom practice sets tailored specifically to the student's identified weak concepts.
+*   **📈 Progress Tracking:** Monitors improvement over time and generates detailed teacher-style summary reports.
 
-## 📂 Repository Structure
+## 🛠️ Technology Stack
+
+### Backend
+*   **Framework:** FastAPI (Python) - High-performance, easy-to-use web framework.
+*   **AI Engine:** Google Gemini (via `google-generativeai`) - Powers the core intelligence.
+*   **Database:** SQLite - Lightweight and efficient for local data storage.
+*   **Agents:** Custom-built AI agents for specific tasks (Diagnosis, Explanation, Quiz, Chat).
+
+### Frontend
+*   **Framework:** React 19 (Vite) - Fast and modern UI development.
+*   **Styling:** Tailwind CSS - Utility-first CSS for rapid and beautiful design.
+*   **Animations:** Framer Motion - Smooth and engaging UI transitions.
+*   **Charts:** Recharts - Data visualization for the dashboard.
+*   **Icons:** Lucide React - Clean and consistent iconography.
+
+## 📂 Project Structure
 
 ```
 TutorMate/
-│
-├── agents/                 # AI Agents
-│   ├── ingest_agent.py     # Data ingestion
-│   ├── diagnostic_agent.py # Gemini-powered diagnosis
-│   ├── practice_agent.py   # Practice generation
-│   ├── explanation_agent.py# Concept explanation
-│   ├── quiz_runner.py      # Grading logic
-│   ├── progress_tracker.py # Mastery tracking
-│   ├── scheduler_agent.py  # Spaced repetition scheduler
-│   └── teacher_summary_agent.py # Report generation
-│
-├── tools/                  # Helper Tools
-│   ├── memory_bank.py      # SQLite database interface
-│   ├── math_solver.py      # SymPy math validation
-│   ├── content_retriever.py# Search tool (placeholder)
-│   └── notification.py     # Notification tool
-│
-├── prompts/                # LLM Prompts
-├── data/                   # Sample Data
-├── notebooks/              # Demo & Evaluation Notebooks
-├── run_demo.py             # Main orchestration script
-├── deploy.sh               # Deployment script
-└── requirements.txt        # Dependencies
+├── agents/                 # AI Agents logic (Chat, Diagnostic, etc.)
+├── tools/                  # Helper tools (Memory, Database, Math Solver)
+├── frontend/               # React frontend application
+├── data/                   # Data storage
+├── api.py                  # Main FastAPI backend entry point
+├── requirements.txt        # Python dependencies
+└── README.md               # Project documentation
 ```
 
-## 🛠️ Setup & Usage
+## ⚡ Getting Started
 
-1.  **Install Dependencies**:
+### Prerequisites
+*   Python 3.10+
+*   Node.js 18+
+*   Google Gemini API Key
+
+### Installation
+
+1.  **Clone the repository:**
     ```bash
+    git clone https://github.com/neeraj1978/Tutor-mate.git
+    cd Tutor-mate
+    ```
+
+2.  **Backend Setup:**
+    ```bash
+    # Create virtual environment
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+    # Install dependencies
     pip install -r requirements.txt
+
+    # Set up environment variables
+    # Create a .env file and add your GOOGLE_API_KEY
     ```
 
-2.  **Set API Key**:
+3.  **Frontend Setup:**
     ```bash
-    export GOOGLE_API_KEY="your-gemini-api-key"
+    cd frontend
+    npm install
     ```
 
-3.  **Run the Demo**:
+### Running the Application
+
+1.  **Start Backend:**
     ```bash
-    python run_demo.py
+    # From root directory
+    python api.py
     ```
+    Backend runs on `http://localhost:8000`
 
-4.  **Run Notebooks**:
-    Open `notebooks/demo.ipynb` in Jupyter/Colab.
+2.  **Start Frontend:**
+    ```bash
+    # From frontend directory
+    npm run dev
+    ```
+    Frontend runs on `http://localhost:5173`
 
-## 🤖 Agent Workflow
+## 🤝 Contributing
 
-1.  **Ingest**: Parses quiz data and student responses.
-2.  **Diagnose**: `DiagnosticAgent` identifies weak concepts and misconceptions.
-3.  **Explain**: `ExplanationAgent` provides targeted explanations.
-4.  **Practice**: `PracticeAgent` generates a new set of questions.
-5.  **Track**: `ProgressTracker` updates the `MemoryBank`.
-6.  **Schedule**: `SchedulerAgent` plans the next session.
-7.  **Report**: `TeacherSummaryAgent` informs the teacher.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## ☁️ Deployment (Vertex AI)
+## 📄 License
 
-Use the included `deploy.sh` script to containerize and deploy the agents to Google Vertex AI Agent Engine.
-
-```bash
-./deploy.sh
-```
-
-## 📝 Evaluation
-
-See `notebooks/evaluation.ipynb` for metrics on agent performance and accuracy.
+This project is licensed under the MIT License.
